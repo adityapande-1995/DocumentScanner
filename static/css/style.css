@@ -1,0 +1,65 @@
+body{
+    min-width: 750px;
+    color:white;
+    font-family: Arial;
+    background-color: #333333;
+    text-align: center;
+}
+#controls {
+    /* display: block; */
+    
+}
+#preview{
+    border:1px solid #aaaaaa;
+}
+.mybtn{
+    /* border:1px solid yellow; */
+    
+    background-color: #4CAF50;
+    padding:5px 10px;
+    border:none;
+    font-size: 15px;
+    margin-right:5px;
+    margin-left:5px;
+}
+.mybtn:hover{
+    background-color: rgb(206, 102, 6);
+}
+.sidebtn{
+    width:90px;
+    background-color: rgb(127, 138, 127);
+    padding:5px 10px;
+    border:none;
+    margin-right:5px;
+    margin-left:5px;
+    margin-top: 10px;
+}
+.sidebtn:hover{
+    background-color: rgb(93, 224, 202);
+}
+.sidebtn_toggle{
+    background-color: rgb(230, 126, 100);
+}
+
+#fileinput{
+    font-size: 15px;
+}
+.sidebar{
+    text-align: center;
+    font-size: 12px;
+    width: 150px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    /* background-color: #111;  */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 70px;
+}
+#bmf{
+    width: 90px;
+    /* background-color: #111;  */
+    margin-left: 20px;
+    margin-top: 10px;
+    
+}
