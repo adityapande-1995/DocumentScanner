@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+        <title>Hello</title>
+        <head>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/style.css")}}">
+
+        </head>
+        <body>
+                <h2> Document scanner app</h2>
+                
+                <div id="controls" class="mydivs">
+                        <input id="fileinput" placeholder="Enter name of image">
+                        <button class="mybtn" id="b0" onclick="fb0()" >Load image</button>
+                        <button class="mybtn" id="b1" onclick="fb1()" disabled>Process</button>
+                </div>
+                <p></p>  
+                <div id="parameters" class="sidebar" >
+                        <button class="sidebtn" >About</button>
+                        <button class="sidebtn" onclick="reset()" title="Go back to selecting image">Reset</button>
+                
+                </div>
+                <p></p>                
+                        <div id="instructions" class="mydivs">
+                                Welcome to my document scanner app frontend !<br>
+                                Enter the path of file to be used.
+                        </div>
+                        <p></p>
+                        <div id="preview_canvas">
+                                <canvas id="preview" width=500 height=300></canvas>
+                        </div>
+                        <p></p>
+                        <progress id="prog_bar" value="0" max="3"></progress>
+               
+                <script src="{{ url_for('static', filename="js/sketch.js")}}"></script>
+        </body>
+</html>
