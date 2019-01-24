@@ -8,12 +8,12 @@ ctx.fillStyle = "gray";
 ctx.textAlign = "center"
 ctx.fillText("No image selected", canv.width/2 , canv.height/2);
 
-function reset(){
+function reset(){ // Refresh page on hitting refresh button
     document.location.reload(true);
     document.getElementById("prog_bar").value = 0;
 }
 
-function fb0(){
+function fb0(){ // On hitting Load Image button
     let d = {"file":document.getElementById("fileinput").value};
 
     $.ajax({
@@ -33,7 +33,7 @@ function fb0(){
 
 }
 
-function fb1(){
+function fb1(){ // On hitting the "Process" button
     let d = {"file":document.getElementById("fileinput").value};
 
     $.ajax({
@@ -51,7 +51,7 @@ function fb1(){
 function after_filepath(response){ // After filepath has been submitted
     document.getElementById("prog_bar").value = 2;
     console.log(response);
-    document.getElementById("instructions").innerHTML = "File uploaded successfully ! <br> Trying to detect the paper automatically. <br> Is the detection correct ?";
+    document.getElementById("instructions").innerHTML = "File uploaded successfully !<br> Is the detection correct ?";
     $('#fileinput').remove();
     $('#b0').remove();
     $('#b1').remove();
@@ -60,7 +60,7 @@ function after_filepath(response){ // After filepath has been submitted
     let controls = document.getElementById("controls");
     let yes_btn = document.createElement("button");
     yes_btn.id = "yes_btn";
-    yes_btn.classList.add("mybtn");
+    yes_btn.classList.add("sidebtn");
     yes_btn.onclick = yesC;
     yes_btn.appendChild(document.createTextNode("Yes"));
     controls.appendChild(yes_btn);
@@ -68,7 +68,7 @@ function after_filepath(response){ // After filepath has been submitted
     // Add no button
     let no_btn = document.createElement("button");
     no_btn.id = "no_btn";
-    no_btn.classList.add("mybtn");
+    no_btn.classList.add("sidebtn");
     no_btn.onclick = noC;
     no_btn.appendChild(document.createTextNode("No"));
     controls.appendChild(no_btn);
@@ -87,33 +87,33 @@ function yesC(){ // if yes is clicked
         data : JSON.stringify({"thresh":"no"}),
         success : ()=>{paint_image('final')},
         error : (error)=>{console.log(error);}
-      });
+    });
 
-      // Delete yes/no buttons and add new ones
-      $('#yes_btn').remove();
-      $('#no_btn').remove();
+    // Delete yes/no buttons and add new ones
+    $('#yes_btn').remove();
+    $('#no_btn').remove();
 
-      // CHange "instructions" text
-      document.getElementById("instructions").innerHTML = "Change the orientation of the image using the buttons";
+    // CHange "instructions" text
+    document.getElementById("instructions").innerHTML = "Change the orientation of the image using the buttons";
 
-      // Add flip_h button
-      let controls = document.getElementById("controls");
-      let flip_h = document.createElement("button");
-      flip_h.id = "flip_h";
-      flip_h.classList.add("mybtn");
-      flip_h.onclick = ()=>{flip({"flip":"H"});};
-      flip_h.appendChild(document.createTextNode("Flip horizontally"));
-      controls.appendChild(flip_h);
+    // Add flip_h button
+    let controls = document.getElementById("controls");
+    let flip_h = document.createElement("button");
+    flip_h.id = "flip_h";
+    flip_h.classList.add("sidebtn");
+    flip_h.onclick = ()=>{flip({"flip":"H"});};
+    flip_h.appendChild(document.createTextNode("Flip horizontally"));
+    controls.appendChild(flip_h);
 
-      // Add flip_v button
-      let flip_v = document.createElement("button");
-      flip_v.id = "flip_v";
-      flip_v.classList.add("mybtn");
-      flip_v.onclick = ()=>{flip({"flip":"V"});};
-      flip_v.appendChild(document.createTextNode("Flip vertically"));
-      controls.appendChild(flip_v);
+    // Add flip_v button
+    let flip_v = document.createElement("button");
+    flip_v.id = "flip_v";
+    flip_v.classList.add("sidebtn");
+    flip_v.onclick = ()=>{flip({"flip":"V"});};
+    flip_v.appendChild(document.createTextNode("Flip vertically"));
+    controls.appendChild(flip_v);
 
-      // Add buttons to side panel
+    // Add filter toggle button to side panel
     let filter = document.createElement("button");
     filter.id="filterbtn";
     filter.classList.add("sidebtn");
@@ -121,19 +121,23 @@ function yesC(){ // if yes is clicked
     filter.title = "Toggle Adaptive Gaussian threshold filter";
     document.getElementById("parameters").appendChild(filter);
     filter.onclick = ()=>{fblur_btn();}
+
 }
 
-function fblur_btn(){
+function fblur_btn(){ // Apply filter toggle button
     var btn = document.getElementById("filterbtn");
     if (btn.innerHTML == "Apply Filter") {
-        var msg = {"thresh":"yes"};
         btn.innerHTML = "Release Filter";
         btn.classList.add("sidebtn_toggle");
-        create_hyperparameters();
+        create_hyperparameters(); // Create slider hyperparameters
+        var msg = {"thresh":"yes", "p1":$('#p1_slider').val(), "p2":$('#p2_slider').val()};
       }  else {
         var msg = {"thresh":"no"};
         btn.innerHTML = "Apply Filter";
         btn.classList.remove("sidebtn_toggle");
+        // Remove slider hyperparameters
+        $('#p1').remove(); $('#p2').remove(); $('#p1_slider').remove(); $('#p2_slider').remove();
+
       }
 
       $.ajax({
@@ -148,12 +152,38 @@ function fblur_btn(){
 }
 
 function create_hyperparameters(){ // function to make sliders
+    // Add slider 1
+    $( "#parameters" ).append( "<div class='slider_val' id='p1'>P1 value:11</div>" );
+    $( "#parameters" ).append( "<input type='range' min='3' max='30' value='11' class='slider' id='p1_slider'>" );
+    $('#p1_slider').on('input', ()=>{
+        $('#p1').html("P1 value: "+$('#p1_slider').val());
+        var msg = {"thresh":"yes", "p1":$('#p1_slider').val(), "p2":$('#p2_slider').val()};
+        $.ajax({
+            type : 'POST',
+            url : '/orient',
+            contentType: 'application/json;charset=UTF-8',
+            data : JSON.stringify(msg),
+            success : ()=>{paint_image('final')},
+            error : (error)=>{console.log(error);}
+          });
 
+    });
 
-}
-
-function noC(){ // if no is clicked, take coordinates manually
-
+    // Add slider 2
+    $( "#parameters" ).append( "<div class='slider_val' id='p2'>P2 value:2</div>" );
+    $( "#parameters" ).append( "<input type='range' min='1' max='20' value='2' class='slider' id='p2_slider'>" );
+    $('#p2_slider').on('input', ()=>{
+        $('#p2').html("P2 value: "+$('#p2_slider').val());
+        var msg = {"thresh":"yes", "p1":$('#p1_slider').val(), "p2":$('#p2_slider').val()};
+        $.ajax({
+            type : 'POST',
+            url : '/orient',
+            contentType: 'application/json;charset=UTF-8',
+            data : JSON.stringify(msg),
+            success : ()=>{paint_image('final')},
+            error : (error)=>{console.log(error);}
+          });
+    });
 }
 
 function flip(data){ // Flip image
@@ -188,3 +218,24 @@ function paint_image(which){
 
             };
 }
+
+function noC(){ // if no is clicked, take coordinates manually
+    $('#instructions').html("Select 4 vertices of the paper in order");
+    paint_image('orig');
+
+    var canvas = document.getElementById('preview');
+    canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        $('#instructions').html("Select 4 vertices of the paper in order. Current pos: "+mousePos.x+" , "+mousePos.y);
+        
+      }, false);
+
+}
+
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: Math.floor(evt.clientX - rect.left),
+      y: evt.clientY - rect.top
+    };
+  }
