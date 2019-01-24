@@ -46,7 +46,7 @@ class Scanner:
     def manual_paper(self):
         print("Specify paper coordinates manually")
     
-    def pers_transform(self,thresh=True):
+    def pers_transform(self,thresh,param=None):
         p1 = np.float32(self.paper_coords)
         # print(p1)
         width = int(np.sqrt( (p1[0,0] - p1[1,0])**2 + (p1[0,1] - p1[1,1])**2 ) )
@@ -58,7 +58,8 @@ class Scanner:
 
         if thresh:
             # Threshold 
-            th3 = cv2.adaptiveThreshold(cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY),255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+            param[0] = (param[0]//2)*2 + 1 # Round to nearest odd number
+            th3 = cv2.adaptiveThreshold(cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY),255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,param[0],param[1])
             self.final = th3
         else:
             self.final = dst
