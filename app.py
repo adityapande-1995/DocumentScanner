@@ -29,9 +29,10 @@ def ori():
     if request.method == 'POST':
         s = json.loads(request.data)
         if s['thresh'] == "yes":
-            A.pers_transform(thresh=True)
+            param = [int(s['p1']), int(s['p2'])]
+            A.pers_transform(True,param=param)
         else:
-            A.pers_transform(thresh=False)
+            A.pers_transform(False,None)
 
     return "Pers transform done and final.jpg saved"
 
